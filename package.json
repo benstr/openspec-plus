@@ -1,0 +1,39 @@
+{
+  "name": "openspec-plus",
+  "version": "0.1.0",
+  "description": "Modular, installable customizations for OpenSpec projects — backlog ledger + working briefs + autonomous lifecycle runner, and pillars + controlled vocabulary",
+  "type": "module",
+  "bin": {
+    "openspec-plus": "./install.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/install.test.mjs",
+    "docs": "node scripts/gen-command-docs.mjs"
+  },
+  "files": [
+    "install.mjs",
+    "lib/",
+    "modules/",
+    "README.md",
+    "DESIGN.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "openspec",
+    "spec-driven-development",
+    "backlog",
+    "ai-agents",
+    "claude-code",
+    "codex",
+    "cursor"
+  ],
+  "author": "Ben Strahan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benstr/openspec-plus.git"
+  }
+}

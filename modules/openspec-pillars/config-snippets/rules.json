@@ -1,0 +1,8 @@
+{
+  "proposal": [
+    "[openspec-plus:pillars] Declare exactly one delivery depth (Minimal | Optimized | Production) in a \"## Depth\" section per openspec/pillars/delivery-depth.md, state its boundary in one sentence, and keep every requirement/task within it (keep/purge/defer anything else)."
+  ],
+  "specs": [
+    "[openspec-plus:pillars] Cite at least one pillar from openspec/pillars/ that the spec enriches; if none fits, surface a missing-pillar question instead of inventing one."
+  ]
+}

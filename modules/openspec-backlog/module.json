@@ -1,0 +1,30 @@
+{
+  "name": "openspec-backlog",
+  "version": "0.1.0",
+  "description": "Ordered backlog ledger + working briefs + autonomous lifecycle runner",
+  "commands": [
+    {
+      "id": "backlog",
+      "name": "OPSX+: Backlog",
+      "description": "Turn messy context into ordered, deduplicated backlog items - a ledger row plus lite working brief per item",
+      "tags": ["workflow", "backlog"],
+      "argumentHint": "free-form context, goals, or research to capture"
+    },
+    {
+      "id": "brief",
+      "name": "OPSX+: Brief",
+      "description": "Deepen one backlog item's working brief at pick-up time - codebase-grounded requirements, risks, pointers; deep mode adds web research",
+      "tags": ["workflow", "backlog", "research"],
+      "argumentHint": "<item-name> [deep | best practices | deep research]"
+    },
+    {
+      "id": "next",
+      "name": "OPSX+: Next",
+      "description": "Autonomously process exactly ONE backlog item end-to-end - brief, propose, apply, verify, sync, archive; designed for /loop and /goal",
+      "tags": ["workflow", "backlog", "autonomous"],
+      "argumentHint": "(no arguments — picks the next eligible item)"
+    }
+  ],
+  "scaffold": { "source": "scaffold/backlog", "target": "openspec/backlog" },
+  "detectFile": "openspec/backlog/backlog.md"
+}

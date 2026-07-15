@@ -1,0 +1,23 @@
+{
+  "name": "openspec-pillars",
+  "version": "0.1.0",
+  "description": "Timeless belief pillars + controlled vocabulary resolver + the delivery-depth discipline",
+  "commands": [
+    {
+      "id": "pillar",
+      "name": "OPSX+: Pillar",
+      "description": "Create or evolve a pillar in openspec/pillars/ — guided authoring in the 5-section format, with loud, owner-gated meaning changes",
+      "tags": ["workflow", "pillars"],
+      "argumentHint": "<slug or belief> (existing slug evolves; new belief creates; empty lists pillars)"
+    },
+    {
+      "id": "definition",
+      "name": "OPSX+: Definition",
+      "description": "Add or update an entry in openspec/pillars/DEFINITIONS.md — the controlled vocabulary resolver (nouns only; never coin an undefined word)",
+      "tags": ["workflow", "pillars", "vocabulary"],
+      "argumentHint": "<term> [alias, meaning, or pointer context to capture]"
+    }
+  ],
+  "scaffold": { "source": "scaffold/pillars", "target": "openspec/pillars" },
+  "detectFile": "openspec/pillars/DEFINITIONS.md"
+}
