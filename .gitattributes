@@ -1,0 +1,5 @@
+# Everything in this repo is text; always check out with LF.
+# The installer's parsers and marker surgery are CRLF-tolerant (readTextLf),
+# but repo files themselves stay LF on every platform so generated output
+# and tests are byte-identical across OSes.
+* text=auto eol=lf

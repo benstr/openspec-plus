@@ -35,6 +35,7 @@ import {
   runIntegrationHooks,
   upsertConfigContext,
   OPENSPEC_PLUS_VERSION,
+  readTextLf,
 } from './lib/install-core.mjs';
 
 const ALL_TOOLS = ['claude', 'codex', 'cursor'];
@@ -170,7 +171,7 @@ function installModule(writer, module, targetDir, tools) {
   const configPath = path.join(targetDir, 'openspec', 'config.yaml');
   const contextSnippetPath = path.join(module.dir, 'config-snippets', 'context.md');
   if (fs.existsSync(contextSnippetPath)) {
-    upsertConfigContext(writer, configPath, module.name, fs.readFileSync(contextSnippetPath, 'utf8'));
+    upsertConfigContext(writer, configPath, module.name, readTextLf(contextSnippetPath));
   }
   const rulesSnippetPath = path.join(module.dir, 'config-snippets', 'rules.json');
   if (fs.existsSync(rulesSnippetPath)) {

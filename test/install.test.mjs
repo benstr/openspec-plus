@@ -15,7 +15,7 @@ import path from 'node:path';
 import { after, describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { OPENSPEC_PLUS_VERSION } from '../lib/install-core.mjs';
+import { OPENSPEC_PLUS_VERSION, parseWorkflowFile } from '../lib/install-core.mjs';
 
 // ---------------------------------------------------------------------------
 // Contract constants — deliberately hardcoded (except the version) so the
@@ -624,5 +624,36 @@ describe('scaffold invariants', () => {
     const ledger = read(backlogScaffold, 'backlog.md');
     assert.ok(!/\|\s*Depth\s*\|/.test(ledger), 'scaffold ledger must not carry a Depth column');
     assertCount(ledger, '| Item | Depends on | Pointer / state |', 2, 'base three-column headers');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CRLF tolerance — Windows checkouts (autocrlf) and CRLF user projects
+// ---------------------------------------------------------------------------
+
+describe('CRLF tolerance', () => {
+  it('parseWorkflowFile accepts CRLF line endings', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'osplus-crlf-'));
+    fixtures.push(dir);
+    const p = path.join(dir, 'wf.md');
+    fs.writeFileSync(p, '---\r\nid: sample\r\ndescription: CRLF sample\r\n---\r\nBody line.\r\n');
+    const { attrs, body } = parseWorkflowFile(p);
+    assert.equal(attrs.id, 'sample');
+    assert.equal(attrs.description, 'CRLF sample');
+    assert.ok(body.includes('Body line.'), 'body parsed');
+  });
+
+  it('config surgery tolerates a CRLF config.yaml and writes back LF', () => {
+    const fx = makeFixture();
+    writeConfig(fx, CONFIG_WITH_CONTEXT_AND_RULES.replace(/\n/g, '\r\n'));
+    runInstall(fx, ['backlog']);
+    const config = read(fx.project, 'openspec', 'config.yaml');
+    const count = (needle) => config.split(needle).length - 1;
+    assert.equal(count(ctxStart('openspec-backlog')), 1, 'context start marker exactly once');
+    assert.equal(count(ctxEnd('openspec-backlog')), 1, 'context end marker exactly once');
+    assert.ok(config.includes('Existing context line one.'), 'pre-existing context survives');
+    assert.ok(config.includes('- "Existing spec rule."'), 'pre-existing rule survives');
+    assert.ok(!config.includes('\r'), 'result is fully LF-normalized');
+    assert.ok(config.endsWith('\n'), 'trailing newline preserved');
   });
 });
