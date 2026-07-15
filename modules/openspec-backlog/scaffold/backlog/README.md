@@ -157,9 +157,15 @@ Autonomy without these rules turns a bulk objective ("finish the wave") into par
 five changes proposed at once, dependencies violated, the ledger racing itself. The rules:
 
 - **One item in flight at a time is the default.** Only the human may deliberately run more
-  concurrently. An agent given a bulk objective satisfies it by **repeating the one-item
-  cycle** (brief → propose → apply → verify → sync → archive, then the next item) — never by
-  fanning items out to parallel subagents or pipelines.
+  concurrently — and that means an explicit instruction naming the concurrent items ("propose
+  X and Y in parallel"); a generic "use subagents" or a bulk objective is NOT that permission.
+  An agent given a bulk objective satisfies it by **repeating the one-item cycle** (brief →
+  propose → apply → verify → sync → archive, then the next item) — never by fanning items out
+  to parallel subagents or pipelines. This rule is not about write conflicts: proposals
+  written before their dependencies are *implemented* encode guesses about them, and every
+  guess is a correction pass waiting to happen. Serial-apply-after-parallel-propose still
+  violates it — the point is keeping expensive artifacts fresh, and briefs are the designated
+  cheap-to-early form.
 - **Hard dependencies gate on ARCHIVED, not proposed.** A row whose `Depends on` names a
   change that is not yet in `openspec/changes/archive/` is not eligible for propose — the dep
   being in flight does not count. (`soft:` entries remain sequencing preferences.)
