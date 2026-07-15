@@ -205,6 +205,14 @@ reason. That contract is what makes `/loop /opsx:next` — or a `/goal` run driv
 to leave running: the loop needs no supervisor, because every failure path halts it with a
 reason attached.
 
+One phrasing tripwire for `/goal`: state the objective as *"run `/opsx:next` repeatedly until
+it reports `LOOP STOP`"* — delegate the process to the command. An objective that respecifies
+the pipeline itself ("brief everything, then propose each, use subagent teams") invites the
+orchestrator to fan items out in parallel, which violates the concurrency contract (see the
+scaffold README): bulk work is the one-item cycle repeated, hard deps gate on *archived*, and
+the ledger is single-writer. Parallel subagents belong inside a stage — research, briefing
+different upcoming items, tests — never across items' propose/apply.
+
 ### The verification gate
 
 Before sync and archive, `/opsx:next` runs the command(s) listed in the `## Verification`

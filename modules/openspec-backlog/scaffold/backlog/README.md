@@ -151,6 +151,24 @@ WORKLOG — append a `### Plan: <task>` entry with numbered sub-steps and tick e
 completes. `tasks.md` keeps the change's granularity; the worklog carries the finer grain, so
 progress *inside* the task survives compaction too.
 
+## Concurrency contract
+
+Autonomy without these rules turns a bulk objective ("finish the wave") into parallel chaos —
+five changes proposed at once, dependencies violated, the ledger racing itself. The rules:
+
+- **One item in flight at a time is the default.** Only the human may deliberately run more
+  concurrently. An agent given a bulk objective satisfies it by **repeating the one-item
+  cycle** (brief → propose → apply → verify → sync → archive, then the next item) — never by
+  fanning items out to parallel subagents or pipelines.
+- **Hard dependencies gate on ARCHIVED, not proposed.** A row whose `Depends on` names a
+  change that is not yet in `openspec/changes/archive/` is not eligible for propose — the dep
+  being in flight does not count. (`soft:` entries remain sequencing preferences.)
+- **Parallel research is fine; parallel writes are not.** Subagents may investigate the
+  codebase, deep-brief *different upcoming items* (one item per subagent), or run tests
+  concurrently. But propose/apply for different items never overlap, and the ledger is
+  **single-writer**: the orchestrator batches row edits sequentially — subagents never edit
+  `backlog.md` themselves.
+
 ## Waves (optional pattern)
 
 When `## Upcoming` outgrows one readable list, group it into wave subsections. This is a

@@ -81,7 +81,7 @@ Summarize:
 
 **Guardrails**
 - Never write application code — investigation is read-only; the brief is the only deliverable
-- One item per invocation — depth of attention is the point of grain 2
+- One item per invocation — depth of attention is the point of grain 2. (Bulk briefing many upcoming items IS allowed via parallel subagents — one item per subagent — but the orchestrator applies their ledger edits sequentially, and propose/apply never parallelize; see the concurrency contract in `openspec/backlog/README.md`.)
 - The brief is mutable — enrich in place; never fork copies of it
 - Don't fake certainty: an unresolved question recorded as open is a good brief, not a bad one
 - Ledger edits are limited to this item's row (pointer state, split-adjusted deps) — never reorder others

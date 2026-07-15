@@ -106,4 +106,5 @@ LOOP CONTINUE  |  LOOP STOP: <reason>
 - Never reorder ledger rows or edit them beyond what the steps above prescribe.
 - The worklog rules in step 4 are not optional: an unwritten subagent digest or an undecomposed oversized task is exactly how long loops die at compaction.
 - One item per invocation. If the item was already mid-lifecycle, finishing it counts as the item.
+- **Bulk objectives change nothing.** A `/goal` or request covering many items or whole waves is satisfied by REPEATING this one-item cycle — never by fanning items out to parallel subagents or overlapping propose/apply. Subagents parallelize *within* a stage (investigation, research, tests); the ledger stays single-writer; the concurrency contract in `openspec/backlog/README.md` binds here.
 - Every invocation ends with the iteration report — even a stop on step 1.

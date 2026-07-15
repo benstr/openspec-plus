@@ -279,6 +279,20 @@ window is decomposed IN THE WORKLOG: append a `### Plan: <task>` entry with numb
 and tick each as it completes. tasks.md keeps the change's granularity; the worklog carries the
 finer grain, so progress *within* the task survives compaction.
 
+## Concurrency contract
+
+Serialization must not live only inside /opsx:next — any driver (a /goal objective, a human
+running stock /opsx:propose directly) must hit the same rails. The contract, embedded in the
+scaffold README, the context snippet's SERIALIZE bullet, and the next/brief bodies:
+
+1. One item in flight at a time is the default; only the human may deliberately run more.
+   A bulk objective (many items, whole waves) is satisfied by REPEATING the one-item cycle,
+   never by fanning items out to parallel subagents or overlapping propose/apply.
+2. Hard dependencies gate on ARCHIVED, not proposed: a dependent is not eligible for propose
+   until its dep is in `openspec/changes/archive/`.
+3. Parallel research/briefing is allowed (one item per subagent); propose/apply never
+   parallelize across items; the ledger is single-writer — subagents never edit backlog.md.
+
 ## Command behavior specs
 
 **/opsx:backlog** — grain 1: messy context → ordered, deduplicated items.
