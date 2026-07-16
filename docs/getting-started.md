@@ -11,17 +11,20 @@ This page is the path through your first loop. The reference material lives else
 
 ## Install
 
-openspec-plus is not on npm. Install from the repo:
+Install from npm. From inside your OpenSpec project:
 
 ```bash
-# one-shot, once openspec-plus lives in its own repo (package.json declares the bin)
-npx github:benstr/openspec-plus all
+cd your-project                              # the folder with your openspec/ directory
+npx @benstr/openspec-plus all                # both modules, tools: claude,codex,cursor
+npx @benstr/openspec-plus backlog            # just one module
+npx @benstr/openspec-plus all --dry-run      # print the plan, write nothing
+```
 
-# or vendor the folder next to your project and run it directly
+Prefer to vendor the repo instead of npx? Clone it and run the installer directly:
+
+```bash
 npx degit benstr/openspec-plus openspec-plus     # (or plain git clone)
-node openspec-plus/install.mjs all                # both modules, tools: claude,codex,cursor
-node openspec-plus/install.mjs backlog            # just one module
-node openspec-plus/install.mjs all --dry-run      # print the plan, write nothing
+node openspec-plus/install.mjs all
 ```
 
 `--target <dir>` picks the project (default: current directory); `--tools claude,codex,cursor`

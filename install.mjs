@@ -3,7 +3,8 @@
  * openspec-plus installer
  *
  * Usage:
- *   node openspec-plus/install.mjs <module|all> [--target <dir>] [--tools claude,codex,cursor] [--dry-run]
+ *   npx @benstr/openspec-plus <module|all> [--target <dir>] [--tools claude,codex,cursor] [--dry-run]
+ *   node install.mjs <module|all> [...same flags]   # from a clone / vendored copy
  *
  * Installs openspec-plus modules into an OpenSpec project: per-tool command
  * and skill files, project scaffolding under openspec/, marker-guarded
@@ -71,7 +72,8 @@ function usage(modules) {
   return `openspec-plus installer v${OPENSPEC_PLUS_VERSION}
 
 Usage:
-  node install.mjs <module|all> [options]
+  npx @benstr/openspec-plus <module|all> [options]
+  node install.mjs <module|all> [options]     # from a clone / vendored copy
 
 Modules:
   ${names}

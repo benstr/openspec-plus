@@ -127,7 +127,8 @@ Every generated file starts (after frontmatter) with the line:
 ## installer CLI
 
 ```
-node openspec-plus/install.mjs <module|all> [--target <dir>] [--tools claude,codex,cursor] [--dry-run]
+npx @benstr/openspec-plus <module|all> [--target <dir>] [--tools claude,codex,cursor] [--dry-run]
+# from a clone / vendored copy: node openspec-plus/install.mjs <module|all> [...same flags]
 ```
 
 Steps per module (all idempotent; `--dry-run` prints planned actions):
