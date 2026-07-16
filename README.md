@@ -49,15 +49,33 @@ modules are installed, the ledger gains a matching `Depth` column automatically.
 
 ## Install
 
+Run it from inside your OpenSpec project — no clone, no global install:
+
 ```bash
-node openspec-plus/install.mjs all                 # both modules, tools: claude,codex,cursor
-node openspec-plus/install.mjs backlog             # one module
-node openspec-plus/install.mjs pillars --tools claude
-node openspec-plus/install.mjs all --dry-run       # show what would happen
-node openspec-plus/install.mjs all --target /path/to/your/project
+cd your-project                  # the folder containing your openspec/ directory
+npx @benstr/openspec-plus all    # both modules, tools: claude,codex,cursor
+```
+
+More options:
+
+```bash
+npx @benstr/openspec-plus backlog                              # one module
+npx @benstr/openspec-plus pillars --tools claude
+npx @benstr/openspec-plus all --dry-run                        # show what would happen
+npx @benstr/openspec-plus all --target /path/to/your/project   # install without cd-ing in
 ```
 
 Requires Node ≥ 18. Zero dependencies. Fully idempotent — re-run any time.
+
+<details>
+<summary>Prefer a local clone instead of npx?</summary>
+
+```bash
+node openspec-plus/install.mjs all
+node openspec-plus/install.mjs pillars --tools claude
+node openspec-plus/install.mjs all --dry-run
+```
+</details>
 
 What an install does:
 

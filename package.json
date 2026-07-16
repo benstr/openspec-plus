@@ -1,5 +1,5 @@
 {
-  "name": "openspec-plus",
+  "name": "@benstr/openspec-plus",
   "version": "0.1.0",
   "description": "Modular, installable customizations for OpenSpec projects — backlog ledger + working briefs + autonomous lifecycle runner, and pillars + controlled vocabulary",
   "type": "module",
@@ -9,9 +9,13 @@
   "engines": {
     "node": ">=18"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "node --test test/install.test.mjs",
-    "docs": "node scripts/gen-command-docs.mjs"
+    "docs": "node scripts/gen-command-docs.mjs",
+    "prepublishOnly": "npm test"
   },
   "files": [
     "install.mjs",
@@ -30,10 +34,14 @@
     "codex",
     "cursor"
   ],
-  "author": "Ben Strahan",
+  "author": "Ben Strahan <ben@benstrahan.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benstr/openspec-plus.git"
-  }
+    "url": "git+https://github.com/benstr/openspec-plus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/benstr/openspec-plus/issues"
+  },
+  "homepage": "https://github.com/benstr/openspec-plus#readme"
 }
