@@ -9,7 +9,7 @@ authoritative instructions.
 
 ## openspec-backlog
 
-Ordered backlog ledger + working briefs + autonomous lifecycle runner (v0.1.0)
+Ordered backlog ledger + working briefs + autonomous lifecycle runner (v0.2.0)
 
 | Id | Name | Description | Argument hint |
 |---|---|---|---|
@@ -24,11 +24,12 @@ Ordered backlog ledger + working briefs + autonomous lifecycle runner (v0.1.0)
 Steps:
 
 1. Read the conventions and the ledger first
-2. Dedup against all three surfaces
-3. Split the input into right-sized items
-4. Create a lite brief per NEW item
-5. Insert rows in dependency-and-value order
-6. Revise existing Upcoming rows where new context changes the picture
+2. Extract the ideal end-state, then run a light research pass
+3. Dedup against all three surfaces
+4. Split the 0→1 path into right-sized items
+5. Create a lite brief per NEW item
+6. Insert rows in dependency-and-value order
+7. Revise existing Upcoming rows where new context changes the picture
 
 ### /opsx:brief
 
@@ -42,7 +43,7 @@ Steps:
 4. Refine the brief in place
 5. Deep mode (only when the argument carries a deep keyword)
 6. Challenge the depth
-7. Split if the shape demands it
+7. Split, or spawn follow-on waypoints, if the shape demands it
 8. Update the row's pointer state
 
 ### /opsx:next
@@ -62,7 +63,7 @@ Steps:
 
 ## openspec-pillars
 
-Timeless belief pillars + controlled vocabulary resolver + the delivery-depth discipline (v0.1.0)
+Timeless belief pillars + controlled vocabulary resolver + the delivery-depth discipline (v0.2.0)
 
 | Id | Name | Description | Argument hint |
 |---|---|---|---|

@@ -73,7 +73,16 @@ created from `templates/brief.md`.
 1. **Capture** — `/opsx:backlog` creates a ledger row plus a lite brief per new item, marked
    `> **Preliminary capture — deepen with /opsx:brief before propose.**` Preliminary captures
    stay honestly preliminary: outcome and boundaries only, open questions stated as open
-   questions — never dressed up as finished thinking.
+   questions — never dressed up as finished thinking. Each brief records, in `## Intended
+   outcome`, the slice of the user's ideal end-state the item advances — its waypoint on the
+   path from today (0) to that ideal (1). This is how the end-goal intention survives per-item
+   without a central intent file: `/opsx:brief` and propose read it to judge whether the
+   declared depth truly serves the end-state, and whether further items at other depths are
+   warranted. `## Intended outcome` is deliberately **ephemeral** — a near-term slice that dies
+   at propose. A **timeless belief** that should guide future work beyond this batch belongs in
+   a pillar, not a brief: with the pillars module installed, capture surfaces such a belief for
+   `/opsx:pillar` consideration — but only when it clears the bar (timeless, cross-cutting, not
+   already covered). Default is ephemeral; pillars stay rare by design, or they become noise.
 2. **Deepen** — `/opsx:brief <name>` enriches the brief in place at pick-up time; the brief is
    mutable and refined through conversation. Deep keywords (`deep`, `best practices`,
    `deep research`) add the **Architecture & Ecosystem** section via web research. The row's

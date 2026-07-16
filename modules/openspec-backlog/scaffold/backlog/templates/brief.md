@@ -13,6 +13,15 @@
 <!-- Mirror the ledger row exactly: bare change names = hard deps; `soft:` prefix = sequencing
      preference; `—` = none. If row and brief disagree, fix whichever is wrong — loudly. -->
 
+## Intended outcome
+
+<!-- The slice of the user's ideal end-state this item advances — its waypoint on the path from
+     today's state (0) to that ideal (1). Records INTENT, not scope: what "fully realized" looks
+     like for the outcome this item serves, and why this item is a step toward it. Depth-agnostic —
+     works with or without the pillars module. Downstream (/opsx:brief, propose) reads this to
+     judge whether the declared depth truly serves the end-state, and whether further items at
+     other depths are warranted. -->
+
 ## Objective
 
 <!-- What this item delivers and for whom, in plain language. Outcome, not implementation.

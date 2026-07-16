@@ -41,6 +41,7 @@ Deepen ONE backlog item's working brief at pick-up time.
 4. **Refine the brief in place**
 
    Work through the template's sections:
+   - `## Intended outcome` — the end-state slice this item advances toward; keep it in view, sharpen it if investigation reveals more, never discard it
    - `## Objective` — what it delivers, for whom
    - `## Shape of the approach` — the emerging how, with alternatives considered
    - `## Requirements` — refined, testable statements
@@ -58,13 +59,15 @@ Deepen ONE backlog item's working brief at pick-up time.
 
    Fold the findings back into Requirements and Shape where they change the picture. Status blockquote becomes `> **Deep-briefed <date>.**`.
 
+   If `openspec/pillars/` exists and the opinionated recommendation reads as a **standing belief** — a timeless principle that would govern future work, not just this item's approach — surface it for `/opsx:pillar` consideration (new, or evolving an existing pillar). Hold the same high bar as capture: timeless, cross-cutting, not already covered; default to leaving it as this item's Shape, and never author a pillar here. Most recommendations are just this item's approach, not a pillar.
+
 6. **Challenge the depth** (only if `openspec/pillars/delivery-depth.md` exists)
 
-   Test the brief's declared `**Depth:**` (`Minimal | Optimized | Production`) against what investigation revealed. Confirm it or change it with the user — never silently. A mixed-depth item must be split before propose: the out-of-depth work moves to its own deduplicated row + lite brief.
+   Test the brief's declared `**Depth:**` (`Minimal | Optimized | Production`) against what investigation revealed **and against the recorded `## Intended outcome`**. Confirm it, or change it with the user — never silently; that includes **raising** the depth when the smallest truthful depth *on the path to the end-state* turns out higher than declared (the recorded intent is legitimate evidence/trigger material). Keep it the smallest truthful depth for the objective-on-the-path, not the largest imaginable. A mixed-depth item must be split before propose: the out-of-depth work moves to its own deduplicated row + lite brief.
 
-7. **Split if the shape demands it**
+7. **Split, or spawn follow-on waypoints, if the shape demands it**
 
-   Splitting is cheap now — just rows and briefs, nothing committed. If investigation shows the item is really two coherent changes, split it: dedup the new name against all three surfaces (`openspec/changes/archive/`, `openspec list --json`, existing rows), then add the row + lite brief and adjust dependencies.
+   Splitting is cheap now — just rows and briefs, nothing committed. If investigation shows the item is really two coherent changes, split it. And if the recorded `## Intended outcome` implies **further waypoints beyond this item's depth** — an Optimized or Production follow-on the end-state needs — mint those too, as additional rows + lite briefs at their own depths. Either way: dedup each new name against all three surfaces (`openspec/changes/archive/`, `openspec list --json`, existing rows), then add the row + lite brief and adjust dependencies. Surface any contentious split, spawn, or depth change with a recommendation — never act silently.
 
 8. **Update the row's pointer state**
 
@@ -74,8 +77,8 @@ Deepen ONE backlog item's working brief at pick-up time.
 
 Summarize:
 - Item and resulting state: **briefed** or **deep**
-- What changed in the brief (requirements refined, risks added, depth confirmed/changed)
-- Any split performed or surfaced-for-input
+- What changed in the brief (requirements refined, risks added, depth confirmed/raised/changed)
+- Any split performed, follow-on waypoint spawned, or surfaced-for-input
 - Remaining open questions the proposal will have to answer
 - Prompt: "When you're ready, `/opsx:propose <name>` — the brief is the primary input."
 
@@ -84,5 +87,5 @@ Summarize:
 - One item per invocation — depth of attention is the point of grain 2. (Bulk briefing many upcoming items IS allowed via parallel subagents — one item per subagent — but the orchestrator applies their ledger edits sequentially, and propose/apply never parallelize; see the concurrency contract in `openspec/backlog/README.md`.)
 - The brief is mutable — enrich in place; never fork copies of it
 - Don't fake certainty: an unresolved question recorded as open is a good brief, not a bad one
-- Ledger edits are limited to this item's row (pointer state, split-adjusted deps) — never reorder others
+- Ledger edits stay limited to this item's row (pointer state, split-adjusted deps) plus any newly split-off or spawned deduplicated rows — never reorder or re-scope other rows
 - If ledger and OpenSpec disagree, OpenSpec wins — report it; fix the ledger only if the fix is unambiguous

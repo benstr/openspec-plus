@@ -91,7 +91,11 @@ Where this pillar is enforced:
   (`rules.proposal`).
 - **Backlog ledger (when the openspec-backlog module is installed):** each row in
   `openspec/backlog/backlog.md` carries a Depth column — the row-level projection of the
-  depth its proposal will declare. Assign the smallest truthful depth.
+  depth its proposal will declare. Assign the smallest truthful depth — judged against the
+  item's objective **on the path to the recorded ideal end-state** (a brief's `## Intended
+  outcome`), not the item in isolation; that recorded intent is a legitimate source of the
+  evidence Optimized needs or the trigger Production names, so a higher-depth waypoint is
+  justified, not padding.
 - **Verification gates (project-defined):** the commands a change must pass before
   archiving live with the project (e.g. a `## Verification` section in the backlog
   README). The pillar constrains scope; the project chooses its gates.

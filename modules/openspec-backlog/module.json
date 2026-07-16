@@ -1,6 +1,6 @@
 {
   "name": "openspec-backlog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ordered backlog ledger + working briefs + autonomous lifecycle runner",
   "commands": [
     {

@@ -68,13 +68,16 @@ an optional **waves** pattern (grouping by scheduling semantics, not topic).
 
 ## Working briefs
 
-A brief is the mutable thinking home for ONE upcoming item — objective, shape, requirements,
-risks, pointers. One file per item, `briefs/<name>.md`, created from
+A brief is the mutable thinking home for ONE upcoming item — its intended outcome, objective,
+shape, requirements, risks, pointers. One file per item, `briefs/<name>.md`, created from
 [`templates/brief.md`](../modules/openspec-backlog/scaffold/backlog/templates/brief.md).
 
 1. **Lite** — `/opsx:backlog` captures only what the input honestly supports, marked
    `> **Preliminary capture — deepen with /opsx:brief before propose.**` Open questions stay
-   open questions; a thin honest brief beats a padded one.
+   open questions; a thin honest brief beats a padded one. Each brief also records, in
+   `## Intended outcome`, the item's slice of the user's ideal end-state — the waypoint on the
+   0→1 path that `/opsx:backlog` sketches from a light research pass, kept alive per-item so
+   depth is judged against where the work is headed, not the item in isolation.
 2. **Deepened** — `/opsx:brief <name>` enriches the brief in place at pick-up time,
    codebase-grounded and refined through conversation. Deep keywords (`deep`,
    `best practices`, `deep research`) add the **Architecture & Ecosystem** section via web

@@ -231,7 +231,9 @@ when the backlog module is present, otherwise record in the proposal's Out of Sc
 
 Title (`# <item-name>`); status blockquote (Preliminary capture / Briefed <date> / Deep-briefed
 <date>); `**Depends on:**`; [hook: `**Depth:** Minimal | Optimized | Production — <one-sentence
-boundary>`]; `## Objective` (what it delivers, for whom); `## Shape of the approach`;
+boundary>`]; `## Intended outcome` (the item's slice of the user's ideal end-state — its
+waypoint on the 0→1 path; always present, depth-agnostic); `## Objective` (what it delivers,
+for whom); `## Shape of the approach`;
 `## Requirements` (refined, testable statements); `## Open questions & risks`;
 `## Pointers` (authority-tagged links: SPEC/CODE/DOC/PRODUCT); optional `## Pillars` (names of
 pillars this item leans on — only if pillars module present); deep-mode-only
@@ -297,7 +299,9 @@ scaffold README, the context snippet's SERIALIZE bullet, and the next/brief bodi
 ## Command behavior specs
 
 **/opsx:backlog** — grain 1: messy context → ordered, deduplicated items.
-Read `openspec/backlog/README.md` + ledger first. Dedup against three surfaces before creating
+Read `openspec/backlog/README.md` + ledger first. Extract the user's **ideal end-state** and
+sketch a light 0→1 map via a bounded read-only research pass (not `/opsx:brief deep`) — minted
+items are waypoints along it, at a mix of depths. Dedup against three surfaces before creating
 anything: `openspec/changes/archive/` (done), `openspec list --json` (in flight), existing rows
 (planned). Split the input into right-sized items (each = one coherent future change); derive
 kebab-case names; create a lite brief per NEW item; insert rows in dependency-and-value order.
@@ -305,7 +309,8 @@ May **split, merge, enrich, and reorder existing Upcoming rows** when new contex
 picture — but NEVER touches In flight rows, and surfaces contentious calls (possible duplicate,
 disputed ordering) to the user with a recommendation instead of acting silently. If pillars
 present: resolve vocabulary through DEFINITIONS.md, note candidate pillars per brief; if the
-depth pillar is present, assign each row the smallest truthful depth. Output: summary table of
+depth pillar is present, assign each row the smallest truthful depth **on the path to its
+recorded `## Intended outcome`**, not in isolation (expect a mix of depths). Output: summary table of
 created / enriched / reordered / surfaced.
 
 **/opsx:brief** — grain 2: deepen ONE item at pick-up time. Explore-stance (investigate the
@@ -314,9 +319,10 @@ from template; no row → offer to run `/opsx:backlog` first). Refine requiremen
 pointers; converse with the user where they engage — the brief is mutable. Deep mode (keyword
 in the argument): spawn a web-research subagent (general-purpose agent with web search; if
 unavailable, research inline) to produce the Architecture & Ecosystem section. Update the row's
-pointer state (**briefed** / **deep**). If the depth pillar exists: challenge and confirm the
-declared depth against what research revealed; a mixed-depth item is split before propose.
-May split the item (cheap now — just rows + briefs).
+pointer state (**briefed** / **deep**). If the depth pillar exists: challenge the
+declared depth against research **and the recorded `## Intended outcome`** — confirm, change, or
+**raise** it with the user; a mixed-depth item is split before propose.
+May split the item, or **spawn follow-on waypoints at other depths** (cheap now — just rows + briefs).
 
 **/opsx:next** — autonomous: exactly ONE item end-to-end per invocation. Composes the sibling
 and stock commands; stock command behavior stays authoritative except the listed autonomy
@@ -409,7 +415,7 @@ undefined word — a needed concept gets its entry in the same change.
 ## Repo packaging (standalone repo)
 
 The openspec-plus folder is a publishable repo:
-- `package.json`: name `openspec-plus`, version matches `OPENSPEC_PLUS_VERSION`
+- `package.json`: name `@benstr/openspec-plus`, version matches `OPENSPEC_PLUS_VERSION`
   (lib/install-core.mjs), `"type": "module"`, `"bin": {"openspec-plus": "./install.mjs"}`
   (install.mjs carries a `#!/usr/bin/env node` shebang), `"engines": {"node": ">=18"}`,
   `"scripts": {"test": "node --test test/"}`, zero `dependencies` forever.

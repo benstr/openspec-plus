@@ -373,6 +373,10 @@ describe('pillars installed on top of backlog', () => {
     const dependsIdx = lines.findIndex((l) => l.startsWith('**Depends on:**'));
     assert.notEqual(dependsIdx, -1, 'Depends on line present');
     assert.equal(lines[dependsIdx + 1], DEPTH_LINE, 'Depth line directly after Depends on');
+    assert.ok(
+      template.includes('## Intended outcome'),
+      'Intended outcome section coexists with the injected Depth line'
+    );
   });
 
   it('depth hook: appends marker-guarded cross-notes to both READMEs', () => {
@@ -610,6 +614,14 @@ describe('scaffold invariants', () => {
 
   it('templates/brief.md exists in the scaffold source', () => {
     assert.ok(exists(backlogScaffold, 'templates', 'brief.md'), 'templates/brief.md missing');
+  });
+
+  it('brief template carries the ## Intended outcome section', () => {
+    const template = read(backlogScaffold, 'templates', 'brief.md');
+    assert.ok(
+      template.includes('## Intended outcome'),
+      'brief template missing the ## Intended outcome section'
+    );
   });
 
   it('templates/worklog.md exists and carries the State/Entries structure', () => {

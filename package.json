@@ -1,6 +1,6 @@
 {
   "name": "@benstr/openspec-plus",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Modular, installable customizations for OpenSpec projects — backlog ledger + working briefs + autonomous lifecycle runner, and pillars + controlled vocabulary",
   "type": "module",
   "bin": {

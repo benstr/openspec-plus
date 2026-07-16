@@ -30,7 +30,7 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
 
 2. **Brief (pointer `—` or lite brief)**
 
-   Run the `/opsx:brief` flow for this item, autonomously: investigate the codebase read-only, create or deepen `openspec/backlog/briefs/<name>.md` from `openspec/backlog/templates/brief.md`, and repoint the row to `briefs/<name>.md` (**briefed**). Do not offer or ask — write it.
+   Run the `/opsx:brief` flow for this item, autonomously: investigate the codebase read-only, create or deepen `openspec/backlog/briefs/<name>.md` from `openspec/backlog/templates/brief.md`, and repoint the row to `briefs/<name>.md` (**briefed**). Do not offer or ask — write it. The brief flow may, per its own rules, raise this item's depth or mint additional deduplicated **upcoming** waypoint rows from the recorded `## Intended outcome`; a contentious depth change or spawn is a hard stop (see guardrails), not a silent autonomous action.
 
 3. **Propose (pointer `briefs/<name>.md`)**
 
