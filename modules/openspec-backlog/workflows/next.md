@@ -22,7 +22,12 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
 
    Read `openspec/backlog/backlog.md`. The ledger is the sole picker; the pointer column is the state.
 
-   - **An In flight row exists** → that's the item (with several In flight rows, the topmost is the item). Read `openspec/changes/<name>/worklog.md` `## State` FIRST — it is the durable memory of every prior session on this item; trust it over instinct. Then resume where the change state implies — run `openspec status --change "<name>" --json`: any `applyRequires` artifact not `done` → step 3 (resume the artifact loop; the brief in `briefs/` is still the primary input); all `applyRequires` done but the tasks file has unchecked `- [ ]` boxes → step 4; every box checked → step 5.
+   - **An In flight row exists** → that's the item (topmost, if several).
+     - Read `openspec/changes/<name>/worklog.md` `## State` **FIRST** — the durable memory of every prior session on this item; trust it over instinct.
+     - Then run `openspec status --change "<name>" --json` and route:
+       - any `applyRequires` artifact not `done` → **step 3** (resume the artifact loop; the brief in `briefs/` is still the primary input)
+       - all `applyRequires` done, tasks file has unchecked `- [ ]` boxes → **step 4**
+       - every box checked → **step 5**
    - **Otherwise** → the topmost `## Upcoming` row whose `Depends on` entries are all satisfied. A dependency is satisfied when it has no ledger row and a matching `openspec/changes/archive/*-<dep>/` exists (or it was never a change name). `soft:` entries are sequencing preferences, not blockers. Skip blocked rows; never reorder them.
    - **No eligible row, or the ledger is empty** → print `LOOP STOP: <reason>` and end. Do not schedule anything.
 
@@ -42,7 +47,13 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
    openspec instructions <artifact-id> --change "<name>" --json
    ```
 
-   Create artifacts in dependency order until every artifact in `applyRequires` has `status: "done"`. (When resuming an interrupted propose, the change already exists — skip `openspec new change` and re-enter the artifact loop.) Then hand off: MOVE the brief to `openspec/backlog/archive/<name>.md`, repoint the ledger row to `openspec/changes/<name>/` (**proposed**), and move the row under `## In flight`. A lingering active brief would be stale — the thinking now lives in the change artifacts. Finally, CREATE `openspec/changes/<name>/worklog.md` from `openspec/backlog/templates/worklog.md` and seed its `Now:`/`Next:` from the task plan — it is the change's durable memory from here on.
+   Create artifacts in dependency order until every artifact in `applyRequires` has `status: "done"`. (Resuming an interrupted propose: the change already exists — skip `openspec new change` and re-enter the artifact loop.)
+
+   **Then hand off — all of these, in order:**
+   1. MOVE the brief to `openspec/backlog/archive/<name>.md` (a lingering active brief would be stale — the thinking now lives in the change artifacts).
+   2. Repoint the ledger row to `openspec/changes/<name>/` (**proposed**).
+   3. Move the row under `## In flight`.
+   4. CREATE `openspec/changes/<name>/worklog.md` from `openspec/backlog/templates/worklog.md`; seed its `Now:`/`Next:` from the task plan — it is the change's durable memory from here on.
 
 4. **Apply (pointer `openspec/changes/<name>/`)**
 
@@ -106,5 +117,8 @@ LOOP CONTINUE  |  LOOP STOP: <reason>
 - Never reorder ledger rows or edit them beyond what the steps above prescribe.
 - The worklog rules in step 4 are not optional: an unwritten subagent digest or an undecomposed oversized task is exactly how long loops die at compaction.
 - One item per invocation. If the item was already mid-lifecycle, finishing it counts as the item.
-- **Bulk objectives change nothing.** A `/goal` or request covering many items or whole waves is satisfied by REPEATING this one-item cycle — never by fanning items out to parallel subagents or overlapping propose/apply. Subagents parallelize *within* a stage (investigation, research, tests); the ledger stays single-writer; the concurrency contract in `openspec/backlog/README.md` binds here.
+- **Bulk objectives change nothing.** A `/goal` or request covering many items or whole waves is satisfied by REPEATING this one-item cycle:
+  - never fan items out to parallel subagents, and never overlap propose/apply across items
+  - subagents parallelize *within* a stage only (investigation, research, tests)
+  - the ledger stays single-writer; the concurrency contract in `openspec/backlog/README.md` binds here
 - Every invocation ends with the iteration report — even a stop on step 1.

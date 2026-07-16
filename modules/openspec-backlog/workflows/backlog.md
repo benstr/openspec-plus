@@ -20,18 +20,34 @@ Capture backlog work. Turn messy context — goals, research, PRDs, audit findin
 
 2. **Extract the ideal end-state, then run a light research pass**
 
-   Before splitting, read the context for the user's **true end-goal** — the ideal state (**1**), not just the immediate ask. Separate it explicitly from the **current state (0)**, and note any signal that the user wants a deep, best-practice, or performant outcome — those signals are legitimate depth evidence downstream, not noise to flatten away.
+   **Read for intent before splitting:**
+   - Separate the **ideal end-state (1)** from the **current state (0)** explicitly — read for the user's true end-goal, not just the immediate ask.
+   - Note any signal of a deep / best-practice / performant outcome. **These are legitimate depth evidence downstream — preserve them, don't flatten.**
 
-   Then run a **light, bounded, read-only research pass** to inform the 0→1 map and the depth calls: skim the codebase for the current state, and — only when the context points at external best-practice or performance targets — do a *few* read-only doc/web lookups. This is planning reconnaissance, not `/opsx:brief deep`: a handful of lookups to shape the map, never a per-item deep dive, and never any code or proposal.
+   **Run a light research pass to shape the map. Do:**
+   - Skim the codebase for the current state (**0**).
+   - Do a *few* read-only doc/web lookups — **only when** the context points at external best-practice or performance targets.
 
-   The result is a **preliminary 0→1 map** — the ordered set of coherent changes that carry the project from current to ideal state. Keep it in working memory only; it is **never persisted as a central file** (the ledger owns order; each item's slice of the end-state lands in its brief's `## Intended outcome`). Expect the map to imply items at a **mix of depths** — an early Minimal capability, then Optimized/Production waypoints.
+   **Never, in this pass:**
+   - A per-item deep dive — that is `/opsx:brief deep`.
+   - Any code, proposal, or write of any kind.
+   - More than a handful of lookups — this is reconnaissance to shape the map, not research.
 
-   **Separate the ephemeral from the durable — and keep the pillar bar high** (only when `openspec/pillars/` exists). Almost all of an end-state is a **near-term slice**: it belongs in `## Intended outcome` and rightly dies at propose. Only rarely does the intent also express a **timeless belief** that should govern *future* work beyond this batch — and that belongs in a pillar, not a brief. Surface such a belief for `/opsx:pillar` consideration **only when it clears every bar**:
+   **The result is a preliminary 0→1 map** — the ordered set of coherent changes from current to ideal state:
+   - Keep it in working memory only. **Never persist it as a central file** — the ledger owns order.
+   - Each item's slice of the end-state lands in that item's brief `## Intended outcome`, not a shared doc.
+   - Expect a **mix of depths** — an early Minimal capability, then Optimized/Production waypoints.
+
+   **Separate the ephemeral from the durable — keep the pillar bar HIGH** (only when `openspec/pillars/` exists). Almost all of an end-state is a near-term slice → `## Intended outcome`, which rightly dies at propose. Only rarely does the intent also express a **timeless belief** that should govern future work beyond this batch — that belongs in a pillar, not a brief. Surface a belief for `/opsx:pillar` consideration **only when it clears every bar:**
    - **Timeless** — still true across many future changes; not tied to this feature, version, or a specific technology choice.
    - **Cross-cutting** — governs multiple future items, not just one (a belief that shapes a single item is just that item's shape).
    - **Not already covered** — check existing pillars first; if it merely *enriches* an existing pillar, recommend evolving that one, never minting a new belief (overlapping pillars weaken all of them).
 
-   Default to ephemeral: when in doubt, leave it in `## Intended outcome` and say nothing. A missed pillar costs nothing — it can be raised any time later — but a low-bar pillar devalues every pillar and turns the set into noise. Surface a cleared candidate as a *recommendation* and let the user decide; never author or evolve a pillar here (that is `/opsx:pillar`, owner-gated and loud). Zero pillar candidates is the normal, healthy outcome.
+   **Otherwise — default to ephemeral:**
+   - When in doubt, leave it in `## Intended outcome` and say nothing.
+   - A missed pillar costs nothing (raise it later); a low-bar pillar devalues every pillar and turns the set into noise.
+   - Surface a cleared candidate as a *recommendation* — never author or evolve a pillar here (that is `/opsx:pillar`, owner-gated and loud).
+   - Zero pillar candidates is the normal, healthy outcome.
 
 3. **Dedup against all three surfaces**
 
@@ -66,13 +82,27 @@ Capture backlog work. Turn messy context — goals, research, PRDs, audit findin
    | <name> | <deps> | briefs/<name>.md (**lite**) |
    ```
 
-   Row position within a section is development order — place each row where its dependencies allow and its value dictates. Bare names in `Depends on` are hard deps; prefix `soft:` for sequencing preferences. If the ledger groups Upcoming into wave subsections (an optional pattern the README documents), insert within the appropriate wave.
+   **Placement:**
+   - Row position within a section IS development order — place each row where its dependencies allow and its value dictates.
+   - `Depends on`: bare names are hard deps; prefix `soft:` for a sequencing preference.
+   - If Upcoming is grouped into wave subsections (optional pattern, see README), insert within the appropriate wave.
 
-   If `openspec/pillars/delivery-depth.md` exists, assign each row the smallest depth (`Minimal | Optimized | Production`) that truthfully serves the item's objective **on the path to its recorded `## Intended outcome`** — never the item weighed in isolation. The recorded end-state is a legitimate source of the evidence Optimized needs or the trigger Production names, so a higher-depth waypoint is *justified, not padding*; depth still stays the smallest truthful one for that objective-on-the-path, and the architecture/trust floor is unchanged. Record it in the ledger's `Depth` column and the brief's `**Depth:**` line with a one-sentence boundary. Across the items minted from one 0→1 map, expect a **mix** of depths — a batch where every fresh item is Minimal is a signal the end-state was dropped; re-check the intent before finishing.
+   **Assign depth** (only if `openspec/pillars/delivery-depth.md` exists):
+   - Give each row the **smallest depth (`Minimal | Optimized | Production`) that truthfully serves its objective on the path to its recorded `## Intended outcome`** — never the item weighed in isolation.
+   - The recorded end-state is legitimate evidence for Optimized / a trigger for Production, so a higher-depth waypoint is **justified, not padding** — and the architecture/trust floor is unchanged.
+   - Record it in the ledger's `Depth` column and the brief's `**Depth:**` line with a one-sentence boundary.
+   - **All-Minimal batch = red flag:** it usually means the end-state was dropped — re-check the intent before finishing.
 
 7. **Revise existing Upcoming rows where new context changes the picture**
 
-   You may split, merge, enrich, and reorder existing **Upcoming** rows when the new context genuinely changes the shape of planned work — including **raising an item's depth** or adding a higher-depth waypoint when the sharpened end-state calls for it. NEVER touch `## In flight` rows. When a call is contentious — a possible duplicate, a disputed ordering, a depth change, scope that might belong to an in-flight change — do not act silently: surface it to the user with your recommendation and wait.
+   - You may split, merge, enrich, and reorder **Upcoming** rows — including **raising an item's depth** or adding a higher-depth waypoint when the sharpened end-state calls for it.
+   - **NEVER touch `## In flight` rows.**
+
+   **Surface with a recommendation and wait — never act silently — when the call is contentious:**
+   - a possible duplicate
+   - a disputed ordering
+   - a depth change
+   - scope that might belong to an in-flight change
 
 **Output**
 
