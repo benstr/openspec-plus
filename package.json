@@ -23,6 +23,7 @@
     "modules/",
     "README.md",
     "DESIGN.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "keywords": [
