@@ -54,5 +54,5 @@ _Nothing yet._
 - Published as the scoped npm package `@benstr/openspec-plus` (`npx @benstr/openspec-plus`).
 
 [Unreleased]: https://github.com/benstr/openspec-plus/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/benstr/openspec-plus/releases/tag/v0.2.0
-[0.1.0]: https://github.com/benstr/openspec-plus/tree/5c8096e
+[0.2.0]: https://github.com/benstr/openspec-plus/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/benstr/openspec-plus/releases/tag/v0.1.0
