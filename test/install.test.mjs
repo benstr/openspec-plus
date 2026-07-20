@@ -694,6 +694,48 @@ describe('tool filtering (--tools claude)', () => {
   });
 });
 
+describe('existing shared agents skill convention', () => {
+  it('refreshes .agents/skills without recreating .codex/skills', () => {
+    const fx = makeFixture();
+    fs.mkdirSync(path.join(fx.project, '.agents', 'skills'), { recursive: true });
+
+    runInstall(fx, ['backlog']);
+
+    for (const id of BACKLOG_IDS) {
+      const skillPath = path.join(
+        fx.project,
+        '.agents',
+        'skills',
+        `openspec-plus-${id}`,
+        'SKILL.md'
+      );
+      assert.ok(fs.existsSync(skillPath), `.agents skill ${id}`);
+      assert.ok(read(skillPath).includes(GENERATED_LINE), `.agents skill ${id} is generated`);
+      assert.ok(
+        !exists(fx.project, '.codex', 'skills', `openspec-plus-${id}`, 'SKILL.md'),
+        `.codex duplicate ${id} must not be created`
+      );
+    }
+  });
+
+  it('keeps the standard .codex/skills target when both roots already exist', () => {
+    const fx = makeFixture();
+    fs.mkdirSync(path.join(fx.project, '.agents', 'skills'), { recursive: true });
+    fs.mkdirSync(path.join(fx.project, '.codex', 'skills'), { recursive: true });
+
+    runInstall(fx, ['backlog']);
+
+    assert.ok(
+      exists(fx.project, '.codex', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      'standard Codex skill was not generated'
+    );
+    assert.ok(
+      !exists(fx.project, '.agents', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      'ambiguous repository was silently redirected'
+    );
+  });
+});
+
 // ---------------------------------------------------------------------------
 // 7. config edge cases
 // ---------------------------------------------------------------------------

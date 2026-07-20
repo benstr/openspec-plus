@@ -43,6 +43,20 @@ import { inspectBacklogConcurrencyProfile } from './lib/backlog-concurrency.mjs'
 const ALL_TOOLS = ['claude', 'codex', 'cursor'];
 
 /**
+ * Keep the standard `.codex/skills` target for fresh repositories. A project
+ * that already uses `.agents/skills` and has no `.codex/skills` tree has made
+ * an explicit repository convention choice, so refresh that active surface
+ * instead of resurrecting a stale duplicate.
+ */
+function codexSkillPath(targetDir, id) {
+  const agentsSkills = path.join(targetDir, '.agents', 'skills');
+  const codexSkills = path.join(targetDir, '.codex', 'skills');
+  const skillsRoot =
+    fs.existsSync(agentsSkills) && !fs.existsSync(codexSkills) ? agentsSkills : codexSkills;
+  return path.join(skillsRoot, `openspec-plus-${id}`, 'SKILL.md');
+}
+
+/**
  * Where each tool's command file and skill directory live. Codex prompts are
  * global (under CODEX_HOME, honoring the env var); everything else is
  * relative to the target project.
@@ -56,8 +70,7 @@ const TOOL_TARGETS = {
   },
   codex: {
     commandPath: (_targetDir, id) => path.join(codexPromptsDir(), `opsx-${id}.md`),
-    skillPath: (targetDir, id) =>
-      path.join(targetDir, '.codex', 'skills', `openspec-plus-${id}`, 'SKILL.md'),
+    skillPath: codexSkillPath,
     renderCommand: renderCodexPrompt,
   },
   cursor: {

@@ -86,6 +86,9 @@ What an install does:
 1. Writes `/opsx:*` command files and agent skills for the selected tools
    (`.claude/commands/opsx/`, `.cursor/commands/`, `~/.codex/prompts/`, plus
    `<tool>/skills/openspec-plus-*/SKILL.md`).
+   Codex skills use `.codex/skills` in a fresh repository; when an existing repository already
+   uses `.agents/skills` and has no `.codex/skills`, that active convention is preserved instead
+   of creating a duplicate tree.
 2. Scaffolds `openspec/backlog/` and/or `openspec/pillars/` (existing files are never
    overwritten).
 3. Appends a marker-guarded protocol block to `openspec/config.yaml` `context:` (and, for
