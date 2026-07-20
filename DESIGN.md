@@ -284,17 +284,37 @@ finer grain, so progress *within* the task survives compaction.
 
 ## Concurrency contract
 
-Serialization must not live only inside /opsx:next — any driver (a /goal objective, a human
-running stock /opsx:propose directly) must hit the same rails. The contract, embedded in the
-scaffold README, the context snippet's SERIALIZE bullet, and the next/brief bodies:
+Concurrency policy must not live only inside `/opsx:next` — any driver (a `/goal` objective,
+a human running stock `/opsx:propose` directly) must hit the same rails. The contract is
+embedded in the scaffold README/AGENTS, persistent context snippet, root managed block, and
+backlog/brief/next bodies:
 
-1. One item in flight at a time is the default; only the human may deliberately run more.
-   A bulk objective (many items, whole waves) is satisfied by REPEATING the one-item cycle,
-   never by fanning items out to parallel subagents or overlapping propose/apply.
-2. Hard dependencies gate on ARCHIVED, not proposed: a dependent is not eligible for propose
-   until its dep is in `openspec/changes/archive/`.
-3. Parallel research/briefing is allowed (one item per subagent); propose/apply never
-   parallelize across items; the ledger is single-writer — subagents never edit backlog.md.
+1. Serial is the universal default. A repository opts in only with
+   `openspec/backlog/concurrency.json` matching the shipped strict schema: exact `$schema`
+   path, schema version 1, profile `owner-scoped-v1`, implementation WIP limit 2, no extra
+   keys. Missing, unreadable, malformed, unsupported, stale, or differently valued policy is
+   serial. Guidance always re-reads the live profile; generated text never retains a grant.
+2. The profile is a ceiling, not permission. One Engineering Manager serializes selection,
+   proposal admission, worklog claim, and ledger commit before implementation or another
+   evaluation. The claim records Owner Scope, Engineer, integration base, profile revision,
+   capacity observation, isolated execution identity, and serialized surfaces.
+3. A second implementation is eligible only when fewer than two claims are active, all hard
+   dependencies are archived, Concurrency Class is not Serialized, Owner Scope and Engineer
+   differ, base/context are fresh, worktree/branch/worklog/PR are isolated, serialized
+   surfaces do not collide, and current manager/review/CI/merge/recovery capacity permits it.
+4. Ledger/admission writes, conflicting doctrine/spec/schema/config/generated surfaces,
+   integration/merge, sync, and archive remain single-writer. Re-evaluate live policy and
+   every eligibility fence before privileged transitions; revocation stops new second-lane
+   admission without erasing accepted work.
+5. `/opsx:next` always runs exactly one item. Bulk objectives repeat that cycle unless the
+   serialized manager separately admits independent work. Parallel research/briefing remains
+   allowed; subagents never edit the ledger.
+
+The zero-dependency installer validates an existing profile after regenerating universal
+fail-closed guidance. Invalid/unsupported policy produces a manual diagnostic with exit code
+zero, consistent with conservative config surgery: the install succeeds, but serial admission
+remains authoritative. The shipped schema is kept-once scaffold; no profile is scaffolded, so
+fresh projects remain serial.
 
 ## Command behavior specs
 
@@ -394,13 +414,15 @@ undefined word — a needed concept gets its entry in the same change.
 ## config snippets
 
 - **backlog context.md** (≤ 15 lines): the backlog protocol digest — ledger is the only order
-  authority; pointer-is-status; when proposing a change that has a ledger row, use its brief in
+  authority; pointer-is-status; preserve the repository-declared ledger shape and optional
+  Product Area catalog; when proposing a change that has a ledger row, use its brief in
   `openspec/backlog/briefs/<name>.md` as PRIMARY input, then move the brief to
   `openspec/backlog/archive/` and repoint the row to `openspec/changes/<name>/` under
   `## In flight`; during apply run the capture sweep AND maintain the change's `worklog.md`
   (read State first; write ahead; digest subagent results the instant they return) per
   `openspec/backlog/README.md`; rows are removed only when the change archives; never
-  hand-write "done".
+  hand-write "done"; missing/invalid concurrency policy is serial and exact owner-scoped
+  policy still requires serialized admission plus all live eligibility checks.
 - **pillars context.md** (≤ 8 lines): read `openspec/pillars/DEFINITIONS.md` (vocabulary) then
   `openspec/pillars/README.md` (reading order) before planning or authoring artifacts; prefer
   canonical terms; a missing concept gets a DEFINITIONS entry in the same change.
@@ -430,7 +452,10 @@ The openspec-plus folder is a publishable repo:
   (`--tools claude`); config edge cases (plain-scalar `context:`, `rules:` with trailing
   comment, file without trailing newline); CODEX_HOME redirection (never touch the real
   `~/.codex`); prose budgets (backlog context snippet ≤ 15 lines, pillars ≤ 8); scaffold
-  invariants (worklog + brief templates exist; base ledger has no Depth column).
+  invariants (worklog + brief templates/schema exist; base ledger has no Depth column);
+  concurrency-profile fixtures (absent/default, exact valid, malformed, unsupported, revoked);
+  repository-shape projections (minimal and Product Area/Depth/Concurrency); and eligibility
+  contract assertions across every generated tool surface.
   All fixtures under `fs.mkdtempSync(path.join(os.tmpdir(), ...))`; clean up after.
 - `docs/`: `getting-started.md` (install → first `/opsx:backlog` → `/opsx:brief` →
   `/opsx:next` loop, per-harness notes for Claude Code / Codex / Cursor);

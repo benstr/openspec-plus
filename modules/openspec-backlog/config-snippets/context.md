@@ -1,15 +1,14 @@
 Backlog protocol (openspec-backlog):
-- `openspec/backlog/backlog.md` is the ONLY authority for development order. OpenSpec owns
-  status: `openspec list` = in flight, `openspec/changes/archive/` = done. Never hand-write "done".
-- The pointer target IS the row's status: `—` → `briefs/<name>.md` → `openspec/changes/<name>/`
-  → row removed when the change archives. Remove a row only when its change archives.
-- When proposing a change that has a ledger row: use its working brief at
-  `openspec/backlog/briefs/<name>.md` as the PRIMARY input, then MOVE the brief to
-  `openspec/backlog/archive/`, repoint the row to `openspec/changes/<name>/` under
-  `## In flight`, and create `worklog.md` from `openspec/backlog/templates/worklog.md`.
-- During apply: run the capture sweep (dedup first, additive only) and keep the change's
-  worklog current per `openspec/backlog/README.md` — read its State first, write ahead of
-  each task, append every subagent's digest the instant it returns, record dead ends.
-- SERIALIZE: one item's propose/apply at a time — a bulk objective means repeating the
-  one-item cycle, never fanning out. A HARD dependency must be ARCHIVED before its dependent
-  is proposed. Subagents may parallelize research and briefing; the ledger is single-writer.
+- `backlog.md` alone owns order; OpenSpec owns status (`list` = in flight, `archive/` = done).
+- Read README, live ledger header, and brief template before edits; preserve all columns/order.
+  If `product-areas.md` exists, use its catalog; otherwise invent no Product Area taxonomy.
+- Pointer target is status: `—` → `briefs/<name>.md` → `openspec/changes/<name>/` → row removed.
+- At propose, use the brief as PRIMARY input, then move it to `backlog/archive/`, repoint/move
+  the row under In flight, and create the change worklog from `backlog/templates/worklog.md`.
+- During apply, run the deduped additive capture sweep; read/write-ahead the worklog and record
+  each subagent digest and dead end immediately. Never hand-write done or remove before archive.
+- CONCURRENCY: absent/unreadable/malformed/unsupported `concurrency.json` is serial. Only exact
+  `owner-scoped-v1`/schema v1/WIP 2 allows evaluation for a second implementation.
+- Profile is a ceiling: one manager serializes claims/ledger; dependencies must be archived;
+  Owner Scope/Engineer differ; base, context, capacity, isolation, and surfaces must all pass.
+- `/opsx:next`, conflicting integration, sync, merge, and archive remain one-item/single-writer.

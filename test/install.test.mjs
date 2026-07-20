@@ -16,6 +16,11 @@ import { after, describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { OPENSPEC_PLUS_VERSION, parseWorkflowFile } from '../lib/install-core.mjs';
+import {
+  BACKLOG_CONCURRENCY_PROFILE_PATH,
+  OWNER_SCOPED_PROFILE,
+  inspectBacklogConcurrencyProfile,
+} from '../lib/backlog-concurrency.mjs';
 
 // ---------------------------------------------------------------------------
 // Contract constants — deliberately hardcoded (except the version) so the
@@ -98,6 +103,12 @@ function runInstall(fx, args) {
 function writeConfig(fx, content) {
   fs.mkdirSync(path.join(fx.project, 'openspec'), { recursive: true });
   fs.writeFileSync(path.join(fx.project, 'openspec', 'config.yaml'), content);
+}
+
+function writeConcurrencyProfile(fx, value, { raw = false } = {}) {
+  const profilePath = path.join(fx.project, BACKLOG_CONCURRENCY_PROFILE_PATH);
+  fs.mkdirSync(path.dirname(profilePath), { recursive: true });
+  fs.writeFileSync(profilePath, raw ? value : `${JSON.stringify(value, null, 2)}\n`);
 }
 
 const read = (...parts) => fs.readFileSync(path.join(...parts), 'utf8');
@@ -312,6 +323,176 @@ describe('backlog-only install', () => {
     assert.ok(claude.includes('# My Project'), 'original content preserved');
     assert.ok(claude.includes('Some notes.'), 'original content preserved');
     assert.ok(!exists(fx.project, 'CODEX.md'), 'CODEX.md must not be created');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 2a. repository-owned concurrency profile
+// ---------------------------------------------------------------------------
+
+describe('backlog concurrency profile', () => {
+  it('keeps a fresh minimal repository serial and scaffolds only the strict schema', () => {
+    const fx = makeFixture();
+    const stdout = runInstall(fx, ['backlog']);
+
+    assert.match(stdout, /serial\s+.*concurrency\.json \(profile absent\)/);
+    assert.ok(
+      exists(
+        fx.project,
+        'openspec',
+        'backlog',
+        'templates',
+        'concurrency-profile.schema.json'
+      ),
+      'strict profile schema was scaffolded'
+    );
+    assert.ok(
+      !exists(fx.project, 'openspec', 'backlog', 'concurrency.json'),
+      'installer must not opt a repository in'
+    );
+    assert.deepEqual(inspectBacklogConcurrencyProfile(fx.project).mode, 'serial');
+  });
+
+  it('accepts the exact profile without changing a HyperFactory-shaped ledger', () => {
+    const fx = makeFixture();
+    const backlogDir = path.join(fx.project, 'openspec', 'backlog');
+    fs.mkdirSync(path.join(backlogDir, 'templates'), { recursive: true });
+    const ledger = `# Backlog Ledger
+
+## In flight
+
+| Item | Product Area | Depth | Concurrency | Depends on | Pointer / state |
+|---|---|---|---|---|---|
+
+## Upcoming
+
+| Item | Product Area | Depth | Concurrency | Depends on | Pointer / state |
+|---|---|---|---|---|---|
+| sample | Factory | Production | Parallel-safe | — | — |
+`;
+    fs.writeFileSync(path.join(backlogDir, 'backlog.md'), ledger);
+    fs.writeFileSync(path.join(backlogDir, 'product-areas.md'), '# Product Areas\n\n- Factory\n');
+    fs.writeFileSync(path.join(backlogDir, 'templates', 'brief.md'), '# Repository brief\n');
+    writeConcurrencyProfile(fx, OWNER_SCOPED_PROFILE);
+
+    const stdout = runInstall(fx, ['backlog']);
+
+    assert.match(stdout, /accepted\s+.*concurrency\.json \(owner-scoped-v1, implementation WIP limit 2\)/);
+    assert.equal(read(backlogDir, 'backlog.md'), ledger, 'six-column ledger changed');
+    assert.equal(inspectBacklogConcurrencyProfile(fx.project).status, 'enabled');
+
+    const projections = [
+      read(fx.project, '.claude', 'commands', 'opsx', 'next.md'),
+      read(fx.project, '.claude', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.project, '.codex', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.project, '.cursor', 'commands', 'opsx-next.md'),
+      read(fx.project, '.cursor', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.codexHome, 'prompts', 'opsx-next.md'),
+    ];
+    for (const text of projections) {
+      assert.ok(text.includes('owner-scoped-v1'), 'projection lacks exact live-profile contract');
+      assert.ok(text.includes('Product Area') || text.includes('one-item end-to-end'),
+        'projection lacks repository-aware or serialized lifecycle guidance');
+    }
+
+    const projectAfterFirstInstall = snapshotTree(fx.project);
+    const codexAfterFirstInstall = snapshotTree(fx.codexHome);
+    runInstall(fx, ['backlog']);
+    assert.deepEqual(
+      snapshotTree(fx.project),
+      projectAfterFirstInstall,
+      'valid-profile project changed on reinstall'
+    );
+    assert.deepEqual(
+      snapshotTree(fx.codexHome),
+      codexAfterFirstInstall,
+      'valid-profile CODEX_HOME changed on reinstall'
+    );
+  });
+
+  it('reports malformed JSON and leaves universal guidance fail-closed', () => {
+    const fx = makeFixture();
+    writeConcurrencyProfile(fx, '{"schemaVersion":', { raw: true });
+
+    const stdout = runInstall(fx, ['backlog']);
+
+    assert.match(stdout, /MANUAL\s+Rejected .*concurrency\.json/);
+    assert.match(stdout, /malformed JSON/);
+    assert.equal(inspectBacklogConcurrencyProfile(fx.project).mode, 'serial');
+    assert.ok(
+      read(fx.project, '.claude', 'commands', 'opsx', 'next.md').includes(
+        'Missing, unreadable,\n   malformed'
+      ),
+      'fail-closed next guidance was not regenerated'
+    );
+  });
+
+  it('reports unsupported values and additional keys as serial', () => {
+    const fx = makeFixture();
+    writeConcurrencyProfile(fx, {
+      ...OWNER_SCOPED_PROFILE,
+      implementationWipLimit: 3,
+      retainedGrant: true,
+    });
+
+    const stdout = runInstall(fx, ['backlog']);
+    const result = inspectBacklogConcurrencyProfile(fx.project);
+
+    assert.match(stdout, /MANUAL\s+Rejected .*concurrency\.json/);
+    assert.equal(result.status, 'unsupported');
+    assert.equal(result.mode, 'serial');
+    assert.ok(result.diagnostics.some((line) => line.includes('unknown keys: retainedGrant')));
+    assert.ok(result.diagnostics.some((line) => line.includes('implementationWipLimit must equal 2')));
+  });
+
+  it('revocation immediately returns to serial without stale generated authorization', () => {
+    const fx = makeFixture();
+    writeConcurrencyProfile(fx, OWNER_SCOPED_PROFILE);
+    runInstall(fx, ['backlog']);
+    const generatedBefore = read(fx.project, '.claude', 'commands', 'opsx', 'next.md');
+
+    fs.unlinkSync(path.join(fx.project, BACKLOG_CONCURRENCY_PROFILE_PATH));
+    const stdout = runInstall(fx, ['backlog']);
+
+    assert.match(stdout, /serial\s+.*concurrency\.json \(profile absent\)/);
+    assert.equal(inspectBacklogConcurrencyProfile(fx.project).mode, 'serial');
+    assert.equal(
+      read(fx.project, '.claude', 'commands', 'opsx', 'next.md'),
+      generatedBefore,
+      'generated guidance encoded a stale enabled/disabled variant'
+    );
+  });
+});
+
+describe('owner-scoped eligibility guidance', () => {
+  it('pins every denial and serialization rule across next projections', () => {
+    const fx = makeFixture();
+    writeConcurrencyProfile(fx, OWNER_SCOPED_PROFILE);
+    runInstall(fx, ['backlog']);
+    const projections = [
+      read(fx.project, '.claude', 'commands', 'opsx', 'next.md'),
+      read(fx.project, '.claude', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.project, '.codex', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.project, '.cursor', 'commands', 'opsx-next.md'),
+      read(fx.project, '.cursor', 'skills', 'openspec-plus-next', 'SKILL.md'),
+      read(fx.codexHome, 'prompts', 'opsx-next.md'),
+    ];
+    const cases = [
+      ['independent scopes may overlap', /Satisfying every condition permits overlap/],
+      ['same Owner Scope', /Same Owner Scope/],
+      ['same Engineer', /same Engineer/],
+      ['dependency only proposed', /proposed-only dependency/],
+      ['third lane', /third lane/],
+      ['stale capacity', /stale capacity/],
+      ['serialized surface', /serialized-surface collision denies admission/],
+      ['racing admission', /concurrent empty-argument `\/opsx:next` selection/],
+    ];
+
+    for (const text of projections) {
+      for (const [name, pattern] of cases) {
+        assert.match(text, pattern, `${name} denial missing from generated projection`);
+      }
+    }
   });
 });
 
@@ -630,6 +811,21 @@ describe('scaffold invariants', () => {
     const text = fs.readFileSync(worklogPath, 'utf8');
     assert.ok(text.includes('## State'), 'worklog template has a ## State section');
     assert.ok(text.includes('## Entries'), 'worklog template has an ## Entries section');
+  });
+
+  it('ships the strict owner-scoped concurrency schema without enabling a profile', () => {
+    const schema = JSON.parse(
+      read(backlogScaffold, 'templates', 'concurrency-profile.schema.json')
+    );
+    assert.equal(schema.additionalProperties, false);
+    assert.deepEqual(schema.required.sort(), Object.keys(OWNER_SCOPED_PROFILE).sort());
+    assert.equal(schema.properties.schemaVersion.const, 1);
+    assert.equal(schema.properties.profile.const, 'owner-scoped-v1');
+    assert.equal(schema.properties.implementationWipLimit.const, 2);
+    assert.ok(
+      !exists(backlogScaffold, 'concurrency.json'),
+      'fresh scaffold must remain serial by omitting concurrency.json'
+    );
   });
 
   it('base scaffold ledger has no Depth column', () => {

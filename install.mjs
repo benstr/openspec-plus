@@ -38,6 +38,7 @@ import {
   OPENSPEC_PLUS_VERSION,
   readTextLf,
 } from './lib/install-core.mjs';
+import { inspectBacklogConcurrencyProfile } from './lib/backlog-concurrency.mjs';
 
 const ALL_TOOLS = ['claude', 'codex', 'cursor'];
 
@@ -225,6 +226,26 @@ function main() {
     (m) => isModuleDetected(m, targetDir) || (opts.dryRun && installedNow.has(m.name))
   );
   const detectedNames = new Set(detectedModules.map((m) => m.name));
+
+  // Validate live repository policy after regenerating universal fail-closed
+  // guidance. An invalid profile is diagnostic, never retained authorization.
+  if (detectedNames.has('openspec-backlog')) {
+    const concurrency = inspectBacklogConcurrencyProfile(targetDir);
+    console.log('\nBacklog concurrency profile');
+    if (concurrency.status === 'enabled') {
+      console.log(
+        `  accepted  ${concurrency.filePath} ` +
+          `(owner-scoped-v1, implementation WIP limit ${concurrency.implementationWipLimit})`
+      );
+    } else if (concurrency.status === 'absent') {
+      console.log(`  serial    ${concurrency.filePath} (profile absent)`);
+    } else {
+      writer.manual(
+        `Rejected ${concurrency.filePath}; serial admission remains authoritative.`,
+        concurrency.diagnostics.join('\n')
+      );
+    }
+  }
 
   // Step 4: root AGENTS.md managed block, composed from detected modules.
   console.log('\nRoot instruction files');

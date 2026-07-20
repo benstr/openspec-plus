@@ -31,6 +31,10 @@ Core discipline (full rules ship in `openspec/backlog/README.md`):
   truth.
 - **Apply harvests.** The capture sweep turns deferred/out-of-scope discoveries back into
   ledger rows and brief notes, so the backlog feeds itself.
+- **Serial by default, bounded by policy.** Fresh projects admit one item at a time. A repository
+  may commit the strict `owner-scoped-v1` profile to permit one manager to admit at most two
+  independently owned implementations; ledger writes, integration, sync, merge, and archive
+  remain single-writer.
 
 ### openspec-pillars
 
@@ -93,6 +97,25 @@ What an install does:
    `CLAUDE.md`/`CODEX.md`.
 5. Runs cross-module integration hooks (e.g. the ledger `Depth` column) when it detects both
    modules, in either install order.
+6. Validates any repository-owned `openspec/backlog/concurrency.json`. Missing policy is the
+   normal serial default; malformed or unsupported policy is reported and remains serial after
+   universal fail-closed guidance is regenerated.
+
+The backlog scaffold includes `templates/concurrency-profile.schema.json` but does not create a
+profile. To opt in, a repository owner commits:
+
+```json
+{
+  "$schema": "./templates/concurrency-profile.schema.json",
+  "schemaVersion": 1,
+  "profile": "owner-scoped-v1",
+  "implementationWipLimit": 2
+}
+```
+
+This is only an evaluation ceiling. The installed backlog conventions define serialized
+admission, distinct Owner Scope/Engineer, archived dependencies, isolated workspaces, current
+capacity evidence, and single-writer shared surfaces.
 
 ## Why it survives `openspec update`
 

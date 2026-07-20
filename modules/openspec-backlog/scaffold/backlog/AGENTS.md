@@ -20,3 +20,12 @@ Agent lens for this folder: orientation plus tripwires. The conventions live in
 - **The ledger points; it never copies.** Deep context lives in `briefs/<name>.md` until
   propose, then in `openspec/changes/<name>/`. A pointer cell carries a target, a bold state
   label, and at most a short note — never a restatement of the brief.
+- **Preserve repository metadata.** Read the live ledger header and brief template before every
+  edit; round-trip every declared column in place. If `product-areas.md` exists, use one primary
+  Product Area in row and brief and supporting areas only in the brief.
+- **Concurrency fails closed.** Missing or invalid `concurrency.json` means serial. Exact
+  `owner-scoped-v1`/schema v1/WIP 2 only permits one manager to evaluate a second independent
+  implementation; it never authorizes work by itself.
+- **Admission and finalization stay single-writer.** Serialize claim/ledger transitions,
+  conflicting shared surfaces, integration/merge, spec sync, and archive. Re-check live profile,
+  ownership, dependencies, freshness, isolation, and downstream capacity before privileged work.

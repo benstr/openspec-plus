@@ -14,7 +14,17 @@ Capture backlog work. Turn messy context — goals, research, PRDs, audit findin
 
 1. **Read the conventions and the ledger first**
 
-   Read `openspec/backlog/README.md` (the rules) and `openspec/backlog/backlog.md` (the ledger) before touching either. The ledger is the ONLY authority for development order; OpenSpec owns status. The pointer column IS each row's status — there is no status field to edit.
+   Read `openspec/backlog/README.md` (the rules), `openspec/backlog/backlog.md` (the ledger),
+   and `openspec/backlog/templates/brief.md` before touching any backlog file. The ledger is the
+   ONLY authority for development order; OpenSpec owns status. The pointer column IS each row's
+   status — there is no status field to edit.
+
+   Treat the installed ledger header and brief template as a repository-owned projection contract:
+   discover every declared column, its exact order, and the corresponding brief metadata before
+   constructing a row. Never replace that shape with an example remembered from another project.
+   If `openspec/backlog/product-areas.md` exists, read it now and use only its canonical Product
+   Areas; assign one primary Product Area per item and keep supporting areas in the brief only.
+   When the catalog is absent, do not invent a Product Area column or taxonomy.
 
    If `openspec/pillars/` exists, read `openspec/pillars/DEFINITIONS.md` and `openspec/pillars/README.md` first: resolve vocabulary through DEFINITIONS.md, prefer canonical terms, and never coin an undefined word.
 
@@ -72,15 +82,19 @@ Capture backlog work. Turn messy context — goals, research, PRDs, audit findin
 
    State open questions as open questions. A thin honest brief beats a padded one.
 
+   Round-trip every repository-declared metadata field that the template or README requires. When
+   Product Areas are installed, record exactly one primary Product Area in the brief and ledger,
+   plus any supporting Product Areas in the brief only. Preserve declared Delivery Depth and
+   Concurrency Class fields as classification metadata; neither field authorizes implementation.
+
    If `openspec/pillars/` exists, note candidate pillars the item leans on in the brief's `## Pillars` section; if no pillar fits, record that as a missing-pillar question rather than inventing one.
 
 6. **Insert rows in dependency-and-value order**
 
-   Add one row per new item under `## Upcoming` in `openspec/backlog/backlog.md`:
-
-   ```
-   | <name> | <deps> | briefs/<name>.md (**lite**) |
-   ```
+   Add one row per new item under `## Upcoming` in `openspec/backlog/backlog.md`. Construct the row
+   from the live table header: emit exactly one cell for every declared column, in the existing
+   order, using the installed README/template rules for each value. Re-read the completed row
+   against the header before saving; missing, reordered, or invented cells are a hard failure.
 
    **Placement:**
    - Row position within a section IS development order — place each row where its dependencies allow and its value dictates.
@@ -124,6 +138,10 @@ Finding nothing new to capture is a valid outcome — say so in one line, don't 
 
 **Guardrails**
 - Read `openspec/backlog/README.md` before every ledger edit — the conventions are strict
+- Read the live ledger header and brief template; preserve every declared column and metadata
+  field in place — never emit a fixed legacy row shape
+- An optional Product Area catalog is repository authority: one primary area in ledger/brief,
+  supporting areas in brief only; without the catalog, invent nothing
 - Dedup before minting: archive, `openspec list --json`, existing rows — always all three
 - The ledger points, never copies — context lives in briefs; rows stay one line
 - Never touch In flight rows; never hand-write "done" — OpenSpec owns status

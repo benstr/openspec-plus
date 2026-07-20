@@ -16,7 +16,12 @@ Deepen ONE backlog item's working brief at pick-up time.
 
 1. **Read the conventions, then locate the item**
 
-   Read `openspec/backlog/README.md`, then find the item's row in `openspec/backlog/backlog.md` and its brief at `openspec/backlog/briefs/<name>.md`.
+   Read `openspec/backlog/README.md`, the live table header in
+   `openspec/backlog/backlog.md`, and `openspec/backlog/templates/brief.md`, then find the item's
+   row and its brief at `openspec/backlog/briefs/<name>.md`. Preserve every repository-declared
+   ledger cell and corresponding brief metadata. If `openspec/backlog/product-areas.md` exists,
+   read it before classification: retain exactly one primary Product Area in row and brief, and
+   supporting Product Areas in the brief only. Do not invent this taxonomy when the file is absent.
 
    - Row + brief exist → enrich the brief in place. It is mutable — that's the point.
    - Row exists, pointer is `—` (no brief) → create the brief from `openspec/backlog/templates/brief.md` first, then deepen it.
@@ -78,7 +83,9 @@ Deepen ONE backlog item's working brief at pick-up time.
 
 8. **Update the row's pointer state**
 
-   In `openspec/backlog/backlog.md`, point the row at `briefs/<name>.md` (**briefed**) — or (**deep**) after deep mode. The pointer target is the status; touch nothing else on the row unless a split changed dependencies or the depth challenge (step 6) changed the declared depth — then update the row's Depth cell to match the brief.
+   In `openspec/backlog/backlog.md`, point the row at `briefs/<name>.md` (**briefed**) — or (**deep**) after deep mode. The pointer target is the status; round-trip every other declared cell
+   byte-for-byte unless a split changed dependencies or the depth challenge (step 6) changed the
+   declared depth — then update only those authorized cells and the matching brief metadata.
 
 **Output**
 
@@ -92,7 +99,12 @@ Summarize:
 **Guardrails**
 - Never write application code — investigation is read-only; the brief is the only deliverable
 - One item per invocation — depth of attention is the point of grain 2
-- **Concurrency:** bulk briefing many items via parallel subagents is allowed — one item per subagent — **but** the orchestrator applies ledger edits **sequentially**, and propose/apply **never** parallelize; the ledger is single-writer. See the concurrency contract in `openspec/backlog/README.md`
+- **Concurrency:** bulk briefing many items via parallel subagents is allowed — one item per
+  subagent — but the orchestrator applies ledger edits sequentially. An absent/invalid profile
+  keeps cross-item propose/apply serial. A valid `owner-scoped-v1` profile allows only a serialized
+  Engineering Manager to admit a second, independently owned implementation after every live
+  eligibility and capacity check; it never makes this command a ledger writer in parallel. See
+  the concurrency contract in `openspec/backlog/README.md`
 - The brief is mutable — enrich in place; never fork copies of it
 - Don't fake certainty: an unresolved question recorded as open is a good brief, not a bad one
 - Ledger edits stay limited to this item's row (pointer state, split-adjusted deps) plus any newly split-off or spawned deduplicated rows — never reorder or re-scope other rows

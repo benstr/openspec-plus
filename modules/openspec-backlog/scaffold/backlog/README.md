@@ -57,6 +57,13 @@ one item at pick-up time, `/opsx:next` runs the topmost eligible item end-to-end
 |---|---|---|
 | `add-rate-limits` | `extract-api-client`, soft: `observability-baseline` | `briefs/add-rate-limits.md` (**lite** — deepen before propose) |
 
+This is the fresh-project minimum, not a global fixed shape. A repository may add governed
+columns such as Product Area, Depth, or Concurrency. Every workflow must read the live header,
+this README, and `templates/brief.md`, then preserve all declared cells in their existing order.
+If `product-areas.md` exists, it is the canonical catalog: put exactly one primary Product Area
+in the ledger and brief, keep supporting areas in the brief only, and retain one globally ordered
+ledger. If the catalog does not exist, do not invent the taxonomy.
+
 - `## In flight` — rows whose change exists in `openspec list`. When an item is proposed, its
   row moves here. Planning passes never reorder, merge, or split In flight rows; they change
   only as their change advances.
@@ -162,27 +169,49 @@ progress *inside* the task survives compaction too.
 
 ## Concurrency contract
 
-Autonomy without these rules turns a bulk objective ("finish the wave") into parallel chaos —
-five changes proposed at once, dependencies violated, the ledger racing itself. The rules:
+Serial is the universal default. The only supported repository opt-in is a committed
+`concurrency.json` that validates against `templates/concurrency-profile.schema.json` with
+exactly schema version `1`, profile `owner-scoped-v1`, and implementation Work in Progress limit
+`2`. Missing, unreadable, malformed, unknown, stale, differently valued, or extra profile input
+means serial. Generated text, a prior install, a Concurrency Class cell, or spare capacity never
+grants parallelism.
 
-- **One item in flight at a time is the default.** Only the human may deliberately run more
-  concurrently — and that means an explicit instruction naming the concurrent items ("propose
-  X and Y in parallel"); a generic "use subagents" or a bulk objective is NOT that permission.
-  An agent given a bulk objective satisfies it by **repeating the one-item cycle** (brief →
-  propose → apply → verify → sync → archive, then the next item) — never by fanning items out
-  to parallel subagents or pipelines. This rule is not about write conflicts: proposals
-  written before their dependencies are *implemented* encode guesses about them, and every
-  guess is a correction pass waiting to happen. Serial-apply-after-parallel-propose still
-  violates it — the point is keeping expensive artifacts fresh, and briefs are the designated
-  cheap-to-early form.
-- **Hard dependencies gate on ARCHIVED, not proposed.** A row whose `Depends on` names a
-  change that is not yet in `openspec/changes/archive/` is not eligible for propose — the dep
-  being in flight does not count. (`soft:` entries remain sequencing preferences.)
-- **Parallel research is fine; parallel writes are not.** Subagents may investigate the
-  codebase, deep-brief *different upcoming items* (one item per subagent), or run tests
-  concurrently. But propose/apply for different items never overlap, and the ledger is
-  **single-writer**: the orchestrator batches row edits sequentially — subagents never edit
-  `backlog.md` themselves.
+The valid profile is only a ceiling for evaluation. One Engineering Manager serializes candidate
+selection, proposal admission, worklog claim, and ledger commit. Before admitting a candidate,
+that manager must prove all conditions:
+
+- fewer than two active implementation claims reconstructed from OpenSpec, ledger pointers,
+  worklogs, and Git evidence;
+- every hard dependency is archived, not merely proposed or merged;
+- the candidate is not `Serialized`, and its primary Owner Scope and accountable Engineer differ
+  from every active claim;
+- its integration base and governing context are fresh;
+- its branch, worktree, worklog, and implementation pull request are isolated;
+- no supporting path collides with an active serialized surface; and
+- current Engineering Manager, review, CI, merge, recovery, and system-capacity evidence permits
+  another lane.
+
+The admitted worklog records item, Owner Scope, Engineer, integration base, profile revision,
+capacity observation, isolated execution identity, and serialized surfaces. Commit that claim
+transition before implementation starts or another candidate is evaluated. Missing or stale
+evidence reduces admission to one or zero lanes; two is a limit, never a utilization target.
+
+Backlog Ledger mutation, admission, definitions/Pillars meaning changes, conflicting current
+specs and contracts, migrations/shared schemas, overlapping root config/lockfile/release/generated
+instruction changes, integration/merge, current-spec sync, and archive remain single-writer.
+`Parallel with serialized integration` work pauses at its named shared surface; `Serialized` work
+does not overlap another implementation.
+
+Re-read the live profile and re-evaluate claim, dependency, base/context, surface ownership,
+external mutation fencing, and downstream capacity before privileged mutation, review handoff,
+integration/merge, sync, and archive. Revoking or invalidating the profile stops new second-lane
+admission immediately and reconciles accepted work toward serial operation without deleting its
+changes, worklogs, branches, failures, or evidence.
+
+`/opsx:next` always processes exactly one item. Do not race empty-argument invocations; a bulk
+objective repeats the one-item cycle unless the serialized Engineering Manager separately admits
+independent work under the valid profile. Parallel research and briefing remain allowed, but all
+ledger edits are applied sequentially by one writer.
 
 ## Waves (optional pattern)
 

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/benstr/openspec-plus/openspec-backlog/concurrency-profile.schema.json",
+  "title": "OpenSpec Plus backlog concurrency profile",
+  "description": "Strict repository opt-in for owner-scoped parallel implementation. Absence or validation failure means serial admission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "profile",
+    "implementationWipLimit"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./templates/concurrency-profile.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "profile": {
+      "const": "owner-scoped-v1"
+    },
+    "implementationWipLimit": {
+      "const": 2
+    }
+  }
+}

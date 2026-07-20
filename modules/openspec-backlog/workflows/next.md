@@ -18,11 +18,32 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
 
    Read `openspec/backlog/README.md` before anything else. If `openspec/pillars/` exists, read `openspec/pillars/DEFINITIONS.md` and `openspec/pillars/README.md` first, plus `openspec/pillars/delivery-depth.md` if present — the item's declared depth must be preserved through every stage below; a mismatch is a hard stop, not something to smooth over.
 
+   Read `openspec/backlog/concurrency.json` from disk now. Owner-scoped parallel implementation
+   exists only when it is a JSON object with exactly `$schema:
+   "./templates/concurrency-profile.schema.json"`, `schemaVersion: 1`, `profile:
+   "owner-scoped-v1"`, and `implementationWipLimit: 2`, with no extra keys. Missing, unreadable,
+   malformed, unknown, stale, or differently valued input means serial. Generated prose, a ledger
+   Concurrency cell, or a prior successful install never substitutes for this live check.
+
+   `/opsx:next` remains one-item end-to-end in either mode. A valid profile permits a separate,
+   serialized Engineering Manager admission path to accept at most two independent implementation
+   claims; it does not permit concurrent empty-argument `/opsx:next` selection, ledger mutation,
+   proposal admission, sync, merge, or archive.
+
+   That manager may admit a second lane only when fewer than two implementation claims are active,
+   every hard dependency is archived, the candidate is not `Serialized`, its primary Owner Scope
+   and Engineer are distinct from all active claims, its base and governing context are fresh,
+   its branch/worktree/worklog/PR are isolated, no supporting path collides with an active
+   serialized surface, and current manager/review/CI/merge/recovery capacity permits the lane.
+   Same Owner Scope, same Engineer, proposed-only dependency, third lane, stale capacity, or any
+   serialized-surface collision denies admission. Satisfying every condition permits overlap but
+   never requires filling the second lane.
+
 1. **Pick the item — from the ledger, nothing else**
 
    Read `openspec/backlog/backlog.md`. The ledger is the sole picker; the pointer column is the state.
 
-   - **An In flight row exists** → that's the item (topmost, if several).
+   - **An In flight row exists** → that's the item (topmost, if a manager has admitted two).
      - Read `openspec/changes/<name>/worklog.md` `## State` **FIRST** — the durable memory of every prior session on this item; trust it over instinct.
      - Then run `openspec status --change "<name>" --json` and route:
        - any `applyRequires` artifact not `done` → **step 3** (resume the artifact loop; the brief in `briefs/` is still the primary input)
@@ -53,7 +74,12 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
    1. MOVE the brief to `openspec/backlog/archive/<name>.md` (a lingering active brief would be stale — the thinking now lives in the change artifacts).
    2. Repoint the ledger row to `openspec/changes/<name>/` (**proposed**).
    3. Move the row under `## In flight`.
-   4. CREATE `openspec/changes/<name>/worklog.md` from `openspec/backlog/templates/worklog.md`; seed its `Now:`/`Next:` from the task plan — it is the change's durable memory from here on.
+   4. CREATE `openspec/changes/<name>/worklog.md` from `openspec/backlog/templates/worklog.md`;
+      seed its `Now:`/`Next:` from the task plan — it is the change's durable memory from here on.
+      Before implementation, record the primary Owner Scope, one accountable Engineer, integration
+      base, profile revision/status, current downstream-capacity observation, assigned isolated
+      branch/worktree/PR, and named serialized surfaces. Commit this serialized claim transition
+      before implementation begins or another candidate is evaluated.
 
 4. **Apply (pointer `openspec/changes/<name>/`)**
 
@@ -65,6 +91,15 @@ This command **composes** the sibling and stock commands: the `/opsx:brief` flow
    - Before starting any task, check the worklog for evidence it already happened; verify on disk, then skip. Never re-derive what is recorded.
 
    Then run the stock `/opsx:apply` flow with the change name explicit: read every context file from `openspec instructions apply --change "<name>" --json`, work through the tasks, and tick each checkbox (`- [ ]` → `- [x]`) as it completes.
+
+   Before privileged repository mutation and again before review handoff, integration/merge,
+   current-spec synchronization, and archive, re-read the live profile and reconcile all active
+   claims from OpenSpec, ledger pointers, worklogs, and Git evidence. Re-check claim identity,
+   distinct Owner Scope and Engineer, archived dependencies, base/context freshness, serialized
+   surfaces, external-mutation fences, and current manager/review/CI/merge/recovery capacity.
+   Any missing, stale, conflicting, or over-limit evidence fences the affected transition and
+   preserves accepted work; profile revocation stops new second-lane admission and reconciles
+   active work toward serial operation.
 
    Before committing, run the **backlog capture sweep** per `openspec/backlog/README.md`: harvest deferred/out-of-scope discoveries into brief notes or new rows + lite briefs — dedup first, additive only, never reorder during apply. An ambiguous finding (possible duplicate, contentious ordering, scope question) is a hard stop, not a silent judgment call.
 
@@ -118,7 +153,10 @@ LOOP CONTINUE  |  LOOP STOP: <reason>
 - The worklog rules in step 4 are not optional: an unwritten subagent digest or an undecomposed oversized task is exactly how long loops die at compaction.
 - One item per invocation. If the item was already mid-lifecycle, finishing it counts as the item.
 - **Bulk objectives change nothing.** A `/goal` or request covering many items or whole waves is satisfied by REPEATING this one-item cycle:
-  - never fan items out to parallel subagents, and never overlap propose/apply across items
+  - never race selection or admission and never fan items out to parallel `/opsx:next` runs
+  - without the exact valid profile, never overlap propose/apply across items
+  - with the exact valid profile, only a serialized Engineering Manager may separately admit a
+    second implementation after proving the full owner/scope/dependency/isolation/capacity contract
   - subagents parallelize *within* a stage only (investigation, research, tests)
   - the ledger stays single-writer; the concurrency contract in `openspec/backlog/README.md` binds here
 - Every invocation ends with the iteration report — even a stop on step 1.

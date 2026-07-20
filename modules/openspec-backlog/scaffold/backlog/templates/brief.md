@@ -13,6 +13,11 @@
 <!-- Mirror the ledger row exactly: bare change names = hard deps; `soft:` prefix = sequencing
      preference; `—` = none. If row and brief disagree, fix whichever is wrong — loudly. -->
 
+<!-- Also mirror every repository-declared metadata field required by README.md and the live
+     ledger header (for example Product Area, Depth, or Concurrency). If product-areas.md exists,
+     record exactly one primary Product Area here and in the ledger; supporting Product Areas
+     belong here only. Do not invent fields that the repository has not declared. -->
+
 ## Intended outcome
 
 <!-- The slice of the user's ideal end-state this item advances — its waypoint on the path from
