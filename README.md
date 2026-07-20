@@ -97,7 +97,7 @@ What an install does:
    their files being modified.
 4. Maintains a managed block in the root `AGENTS.md` (created if missing) — the single
    progressive-disclosure entry point — and prepends a one-line pointer to an existing root
-   `CLAUDE.md`/`CODEX.md`.
+   regular `CLAUDE.md`/`CODEX.md`. Existing symlinks are preserved without writing through them.
 5. Runs cross-module integration hooks (e.g. the ledger `Depth` column) when it detects both
    modules, in either install order.
 6. Validates any repository-owned `openspec/backlog/concurrency.json`. Missing policy is the

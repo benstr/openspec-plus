@@ -163,8 +163,10 @@ Steps per module (all idempotent; `--dry-run` prints planned actions):
      for development order; the pointer target IS the status; OpenSpec owns status —
      `openspec list` = in flight, `openspec/changes/archive/` = done; never hand-write "done";
      read `openspec/backlog/README.md` before touching the ledger)
-5. Prepend a pointer to root `CLAUDE.md` and `CODEX.md` **only if the file already exists** and
-   doesn't contain the guard `<!-- openspec-plus:pointer -->`:
+5. Prepend a pointer to a regular root `CLAUDE.md` and `CODEX.md` **only if the file already
+   exists** and doesn't contain the guard `<!-- openspec-plus:pointer -->`. Preserve symlinks
+   unchanged: writing through a `CLAUDE.md -> AGENTS.md` link would corrupt the authoritative
+   root guide with a self-pointer.
    ```
    <!-- openspec-plus:pointer -->
    > Before starting any work, read [AGENTS.md](AGENTS.md) — authority model, planning
@@ -451,8 +453,8 @@ The openspec-plus folder is a publishable repo:
 - `.github/workflows/ci.yml`: `node --test test/` on push + PR (Node 20 and 22).
 - `test/install.test.mjs`: the zero-dependency smoke suite (node:test). Scenarios: dry-run
   writes nothing; backlog-only install (paths + frontmatter + NO Depth column + config surgery
-  preserving pre-existing context/rules + AGENTS.md order-model-only + CLAUDE.md pointer
-  prepend); pillars-on-top (rules merge with prefix, AGENTS.md gains authority model, depth
+  preserving pre-existing context/rules + AGENTS.md order-model-only + regular CLAUDE.md pointer
+  prepend + symlink preservation); pillars-on-top (rules merge with prefix, AGENTS.md gains authority model, depth
   hook: ledger column + template line + README cross-notes); reverse install order equivalence;
   full-idempotency re-run (zero duplicate blocks/rules/pointers/columns); tool filtering
   (`--tools claude`); config edge cases (plain-scalar `context:`, `rules:` with trailing

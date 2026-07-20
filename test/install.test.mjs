@@ -736,6 +736,25 @@ describe('existing shared agents skill convention', () => {
   });
 });
 
+describe('root instruction symlinks', () => {
+  it('preserves CLAUDE.md -> AGENTS.md without writing a self-pointer through it', () => {
+    const fx = makeFixture();
+    const original = '# Repository guide\n\nAuthoritative instructions.\n';
+    fs.writeFileSync(path.join(fx.project, 'AGENTS.md'), original);
+    fs.symlinkSync('AGENTS.md', path.join(fx.project, 'CLAUDE.md'));
+
+    const stdout = runInstall(fx, ['backlog']);
+
+    assert.ok(fs.lstatSync(path.join(fx.project, 'CLAUDE.md')).isSymbolicLink());
+    assert.equal(fs.readlinkSync(path.join(fx.project, 'CLAUDE.md')), 'AGENTS.md');
+    const agents = read(fx.project, 'AGENTS.md');
+    assert.ok(agents.startsWith(original.trimEnd()), 'repository guide content was replaced');
+    assertCount(agents, POINTER_GUARD, 0, 'self-pointer written through symlink');
+    assertCount(agents, AGENTS_START, 1, 'managed block');
+    assert.match(stdout, /CLAUDE\.md \(symlink preserved/);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // 7. config edge cases
 // ---------------------------------------------------------------------------
